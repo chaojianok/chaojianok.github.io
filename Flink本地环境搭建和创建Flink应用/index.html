@@ -106,7 +106,7 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://chaojianok.github.io/images/flink-dashboard-overview.png">
 <meta property="og:image" content="https://chaojianok.github.io/images/taskmanager-stdout.png">
-<meta property="og:updated_time" content="2019-05-20T08:59:25.795Z">
+<meta property="og:updated_time" content="2019-05-20T09:05:45.255Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flink本地环境搭建和创建Flink应用">
 <meta name="twitter:description" content="本篇介绍一下Flink本地环境搭建和创建Flink应用。  本地安装Flink可以在Linux、Mac OS X和Windows上运行，要求安装Java 8.x。1234java -versionjava version &quot;1.8.0_161&quot;Java(TM) SE Runtime Environment (build 1.8.0_161-b12)Java HotSpot(TM) 64-Bit">
@@ -410,7 +410,7 @@
                 
               
 
-              <time title="Created: 2019-05-20 15:12:21 / Modified: 16:59:25" itemprop="dateCreated datePublished" datetime="2019-05-20T15:12:21+08:00">2019-05-20</time>
+              <time title="Created: 2019-05-20 15:12:21 / Modified: 17:05:45" itemprop="dateCreated datePublished" datetime="2019-05-20T15:12:21+08:00">2019-05-20</time>
             
 
             
@@ -474,7 +474,7 @@
 <h4 id="下载并启动Flink"><a href="#下载并启动Flink" class="headerlink" title="下载并启动Flink"></a>下载并启动Flink</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>从官网下载页面 http://flink.apache.org/downloads.html 下载Flink</span><br><span class="line">wget http://mirrors.tuna.tsinghua.edu.cn/apache/flink/flink-1.8.0/flink-1.8.0-bin-scala_2.11.tgz</span><br><span class="line">tar xzf flink-1.8.0-bin-scala_2.11.tgz</span><br><span class="line">cd flink-1.8.0</span><br><span class="line"><span class="meta">#</span>启动本地Flink群集</span><br><span class="line">./bin/start-cluster.sh</span><br><span class="line"><span class="meta">#</span>停止本地Flink群集</span><br><span class="line"><span class="meta">#</span>./bin/stop-cluster.sh</span><br></pre></td></tr></table></figure>
 <p>启动成功后可以打开<code>http://127.0.0.1:8081</code>看到Flink的web UI，如下图所示。  </p>
 <p><img src="/images/flink-dashboard-overview.png" alt="Flink web UI" title="Flink web UI">  </p>
-<p><em>本地安装也可以通过Flink源码构建的方式，具体操作可以参考<a href="https://www.toutiao.com/i6691941792230670860/" target="_blank" rel="noopener">Flink源码分析-源码构建</a>。</em>  </p>
+<p><em>本地安装也可以通过Flink源码构建的方式，具体操作可以参考<a href="https://www.toutiao.com/i6685975180734366220/" target="_blank" rel="noopener">Flink源码分析-源码构建</a>。</em>  </p>
 <h4 id="运行示例"><a href="#运行示例" class="headerlink" title="运行示例"></a>运行示例</h4><p>使用<code>nc</code>命令监听指定端口。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">nc -l 9002</span><br><span class="line"><span class="meta">#</span>然后随便输入点东西，比如像下面这样</span><br><span class="line"><span class="meta">#</span>这些东西在提交SocketWindowWordCount Job之前或之后输入都是可以的</span><br><span class="line">hello world</span><br><span class="line">word count</span><br><span class="line">hi</span><br><span class="line">flink</span><br><span class="line">ha ha</span><br></pre></td></tr></table></figure></p>
 <p>运行Flink测试example，这里用Flink WordCount Job来测试一下。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>在源码目录下执行，指定9002端口，这个端口要和刚刚nc命令监听的端口一致</span><br><span class="line">./build-target/bin/flink run ./build-target/examples/streaming/SocketWindowWordCount.jar --port 9002</span><br></pre></td></tr></table></figure></p>
 <p>查看SocketWindowWordCount Job的输出。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>在源码目录下执行</span><br><span class="line">tail -100f ./build-target/log/flink-*-taskexecutor-0-*.out</span><br><span class="line"><span class="meta">#</span>执行后输出如下</span><br><span class="line">hello : 1</span><br><span class="line">world : 1</span><br><span class="line">word : 1</span><br><span class="line">count : 1</span><br><span class="line">hi : 1</span><br><span class="line">flink : 1</span><br><span class="line">ha : 2</span><br></pre></td></tr></table></figure></p>
