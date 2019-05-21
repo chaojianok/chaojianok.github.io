@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Scala是一门多范式编程语言，集成了面向对象和函数式语言的特性。本篇文章将以代码示例的形式简单介绍一下Scala语言的基础语法。  声明值和变量1234567891011121314// val声明的变量是不可变的val str1 = &quot;Hello World!&quot;val str2 : String = &quot;Hello World!&quot;val str3 : java.lang.String = &quot;H">
+<meta name="keywords" content="Scala">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala快速入门 - 基础语法篇">
+<meta property="og:url" content="https://chaojianok.github.io/Scala快速入门-基础语法篇/index.html">
+<meta property="og:site_name" content="Chaojianok">
+<meta property="og:description" content="Scala是一门多范式编程语言，集成了面向对象和函数式语言的特性。本篇文章将以代码示例的形式简单介绍一下Scala语言的基础语法。  声明值和变量1234567891011121314// val声明的变量是不可变的val str1 = &quot;Hello World!&quot;val str2 : String = &quot;Hello World!&quot;val str3 : java.lang.String = &quot;H">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-21T08:21:30.469Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Scala快速入门 - 基础语法篇">
+<meta name="twitter:description" content="Scala是一门多范式编程语言，集成了面向对象和函数式语言的特性。本篇文章将以代码示例的形式简单介绍一下Scala语言的基础语法。  声明值和变量1234567891011121314// val声明的变量是不可变的val str1 = &quot;Hello World!&quot;val str2 : String = &quot;Hello World!&quot;val str3 : java.lang.String = &quot;H">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Chaojianok" type="application/atom+xml">
+
+
+
+  
+  
+  <link rel="canonical" href="https://chaojianok.github.io/Scala快速入门-基础语法篇/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Scala快速入门 - 基础语法篇 | Chaojianok</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Chaojianok</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Chaojianok's Blog</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/404/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>Commonweal 404</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://chaojianok.github.io/Scala快速入门-基础语法篇/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaojian Zhang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/dx.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaojianok">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Scala快速入门 - 基础语法篇
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-05-21 13:25:43 / Modified: 16:21:30" itemprop="dateCreated datePublished" datetime="2019-05-21T13:25:43+08:00">2019-05-21</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Scala/" itemprop="url" rel="index"><span itemprop="name">Scala</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>Scala是一门多范式编程语言，集成了面向对象和函数式语言的特性。本篇文章将以代码示例的形式简单介绍一下Scala语言的基础语法。</p>
+</blockquote>
+<h2 id="声明值和变量"><a href="#声明值和变量" class="headerlink" title="声明值和变量"></a>声明值和变量</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// val声明的变量是不可变的</span></span><br><span class="line"><span class="keyword">val</span> str1 = <span class="string">"Hello World!"</span></span><br><span class="line"><span class="keyword">val</span> str2 : <span class="type">String</span> = <span class="string">"Hello World!"</span></span><br><span class="line"><span class="keyword">val</span> str3 : java.lang.<span class="type">String</span> = <span class="string">"Hello World!"</span></span><br><span class="line"></span><br><span class="line">println(str1)</span><br><span class="line">println(str2)</span><br><span class="line">println(str3)</span><br><span class="line"></span><br><span class="line"><span class="comment">// var声明的变量是可变的</span></span><br><span class="line"><span class="keyword">var</span> str5 = <span class="string">"Hello World!"</span></span><br><span class="line">str5 = <span class="string">"str5 Hello World!"</span></span><br><span class="line"></span><br><span class="line">println(str5)</span><br></pre></td></tr></table></figure>
+<h2 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h2><p>Scala的数据类型包括：Byte、Char、Short、Int、Long、Float、Double和Boolean。在Scala中，这些类型都是“类”，并且都是包scala的成员，比如，Int的全名是scala.Int。对于字符串，Scala用java.lang.String类来表示字符串。<br>Scala的字面量包括：整数字面量、浮点数字面量、布尔型字面量、字符字面量、字符串字面量、符号字面量、函数字面量和元组字面量。举例如下：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> i = <span class="number">123</span>      <span class="comment">//123就是整数字面量</span></span><br><span class="line"><span class="keyword">val</span> i = <span class="number">3.14</span>     <span class="comment">//3.14就是浮点数字面量</span></span><br><span class="line"><span class="keyword">val</span> i = <span class="literal">true</span>     <span class="comment">//true就是布尔型字面量</span></span><br><span class="line"><span class="keyword">val</span> i = '<span class="type">A</span>'      <span class="comment">//'A'就是字符字面量</span></span><br><span class="line"><span class="keyword">val</span> i = <span class="string">"Hello"</span>  <span class="comment">//"Hello"就是字符串字面量</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Scala允许对“字面量”直接执行方法</span></span><br><span class="line"><span class="number">5.</span>toString()            <span class="comment">//产生字符串"5"</span></span><br><span class="line"><span class="string">"abc"</span>.intersect(<span class="string">"bcd"</span>)  <span class="comment">//输出"bc"</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h2><p>Scala的常用操作符：加(+)、减(-) 、乘(*) 、除(/) 、余数（%）、大于(&gt;)、小于(&lt;)、大于等于(&gt;=)和小于等于(&lt;=)等，这些操作符就是方法。<br>Scala的操作符就是方法，<code>a 方法 b</code>和<code>a.方法(b)</code>是等价的，前者是后者的简写形式，这里的<code>+</code>是方法名，是Int类中的一个方法。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 下面三种写法的输出结果都是8</span></span><br><span class="line"><span class="keyword">val</span> sum1 = <span class="number">5</span> + <span class="number">3</span></span><br><span class="line"><span class="keyword">val</span> sum2 = (<span class="number">5</span>).+(<span class="number">3</span>)</span><br><span class="line"><span class="keyword">val</span> sum2 = <span class="number">5.</span>+(<span class="number">3</span>)</span><br></pre></td></tr></table></figure></p>
+<h2 id="控制结构"><a href="#控制结构" class="headerlink" title="控制结构"></a>控制结构</h2><h4 id="if条件表达式"><a href="#if条件表达式" class="headerlink" title="if条件表达式"></a>if条件表达式</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> x = <span class="number">6</span></span><br><span class="line"><span class="keyword">if</span> (x &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    println(<span class="string">"x = "</span> + x)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    println(<span class="string">"x = "</span> + x)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> x = <span class="number">3</span></span><br><span class="line"><span class="keyword">if</span> (x &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    println(<span class="string">"x = "</span> + x)</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (x == <span class="number">0</span>) &#123;</span><br><span class="line">    println(<span class="string">"x = 0"</span>)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    println(<span class="string">"x = "</span> + x)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Scala中的if表达式的值可以赋值给变量</span></span><br><span class="line"><span class="keyword">val</span> a = <span class="keyword">if</span> (x &gt; <span class="number">0</span>) <span class="number">1</span> <span class="keyword">else</span> <span class="number">-1</span></span><br></pre></td></tr></table></figure>
+<h4 id="while循环"><a href="#while循环" class="headerlink" title="while循环"></a>while循环</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> i = <span class="number">9</span></span><br><span class="line"><span class="keyword">while</span> (i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    i -= <span class="number">1</span></span><br><span class="line">    printf(<span class="string">"i is %d\n"</span>, i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> i = <span class="number">0</span></span><br><span class="line">do &#123;</span><br><span class="line">    i += <span class="number">1</span></span><br><span class="line">    println(i)</span><br><span class="line">&#125; <span class="keyword">while</span> (i &lt; <span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// for Range</span></span><br><span class="line"><span class="comment">// Range可以是一个数字区间表示 i to j ，或者 i until j，左箭头 &lt;- 用于为变量 x 赋值。</span></span><br><span class="line"><span class="keyword">for</span> (a &lt;- <span class="number">1</span> to <span class="number">10</span>) &#123;</span><br><span class="line">   println(<span class="string">"a = "</span> + a);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> (a &lt;- <span class="number">1</span> until <span class="number">10</span>) &#123;</span><br><span class="line">   println(<span class="string">"a = "</span> + a);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span>( a &lt;- <span class="number">1</span> to <span class="number">3</span>; b &lt;- <span class="number">1</span> to <span class="number">3</span>)&#123;</span><br><span class="line">   println( <span class="string">"a = "</span> + a );</span><br><span class="line">   println( <span class="string">"Value of b: "</span> + b );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 循环集合</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">val</span> numList = <span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>);</span><br><span class="line"><span class="keyword">for</span> (a &lt;- numList) &#123;</span><br><span class="line">   println(<span class="string">"a = "</span> + a);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 循环过滤</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">val</span> numList = <span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>);</span><br><span class="line"><span class="keyword">for</span> (a &lt;- numList <span class="keyword">if</span> a != <span class="number">3</span>; <span class="keyword">if</span> a &lt; <span class="number">8</span>) &#123;</span><br><span class="line">   println(<span class="string">"a = "</span> + a);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用yield</span></span><br><span class="line"><span class="comment">// 大括号中用于保存变量和条件，retVal是变量，循环中的yield会把当前的元素记下来，保存在集合中，循环结束后将返回该集合。</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">val</span> numList = <span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>);</span><br><span class="line"><span class="keyword">var</span> retVal = <span class="keyword">for</span> &#123;</span><br><span class="line">    a &lt;- numList <span class="keyword">if</span> a != <span class="number">3</span>; <span class="keyword">if</span> a &lt; <span class="number">8</span></span><br><span class="line">&#125; <span class="keyword">yield</span> a</span><br><span class="line"><span class="keyword">for</span>(a &lt;- retVal) &#123;</span><br><span class="line">   println(<span class="string">"a = "</span> + a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><h4 id="定长数组，就是长度不变的数组，在Scala中使用Array进行声明，如下："><a href="#定长数组，就是长度不变的数组，在Scala中使用Array进行声明，如下：" class="headerlink" title="定长数组，就是长度不变的数组，在Scala中使用Array进行声明，如下："></a>定长数组，就是长度不变的数组，在Scala中使用Array进行声明，如下：</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明一个长度为3的整型数组，每个数组元素初始化为0</span></span><br><span class="line"><span class="keyword">val</span> intValueArr = <span class="keyword">new</span> <span class="type">Array</span>[<span class="type">Int</span>](<span class="number">3</span>)</span><br><span class="line"><span class="comment">//在Scala中，对数组元素的应用，是使用圆括号，而不是方括号，也就是使用intValueArr(0)，而不是intValueArr[0]，这个和Java是不同的。</span></span><br><span class="line">intValueArr(<span class="number">0</span>) = <span class="number">12</span></span><br><span class="line">intValueArr(<span class="number">1</span>) = <span class="number">45</span></span><br><span class="line">intValueArr(<span class="number">2</span>) = <span class="number">33</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//声明一个长度为3的字符串数组，每个数组元素初始化为null</span></span><br><span class="line"><span class="keyword">val</span> strArr = <span class="keyword">new</span> <span class="type">Array</span>[<span class="type">String</span>](<span class="number">3</span>)</span><br><span class="line">strArr(<span class="number">0</span>) = <span class="string">"Flink"</span></span><br><span class="line">strArr(<span class="number">1</span>) = <span class="string">"Storm"</span></span><br><span class="line">strArr(<span class="number">2</span>) = <span class="string">"Spark"</span></span><br><span class="line"><span class="keyword">for</span> (i &lt;- <span class="number">0</span> to <span class="number">2</span>) println(strArr(i)) </span><br><span class="line"></span><br><span class="line"><span class="comment">//Scala提供了更加简洁的数组声明和初始化方法，如下：</span></span><br><span class="line"><span class="keyword">val</span> intValueArr = <span class="type">Array</span>(<span class="number">12</span>, <span class="number">45</span>, <span class="number">33</span>)</span><br><span class="line"><span class="keyword">val</span> strArr = <span class="type">Array</span>(<span class="string">"Flink"</span>, <span class="string">"Storm"</span>, <span class="string">"Spark"</span>)</span><br><span class="line"><span class="comment">//从上面代码可以看出，都不需要给出数组类型，Scala会自动根据提供的初始化数据来推断出数组的类型。</span></span><br></pre></td></tr></table></figure>
+<h4 id="可变数组"><a href="#可变数组" class="headerlink" title="可变数组"></a>可变数组</h4><p><em>可变数组需要导入包scala.collection.mutable.ArrayBuffer</em><br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//导入ArrayBuffer包</span></span><br><span class="line"><span class="keyword">import</span> scala.collection.mutable.<span class="type">ArrayBuffer</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//定义一个可变的数组</span></span><br><span class="line"><span class="keyword">val</span> arr : <span class="type">ArrayBuffer</span>[<span class="type">String</span>] = <span class="keyword">new</span> <span class="type">ArrayBuffer</span>[<span class="type">String</span>]()</span><br><span class="line"></span><br><span class="line"><span class="comment">//在末尾添加一个元素</span></span><br><span class="line">arr += <span class="string">"Hadoop"</span></span><br><span class="line"><span class="comment">//在末尾添加多个元素</span></span><br><span class="line">arr += (<span class="string">"Hive"</span>, <span class="string">"Hbase"</span>)</span><br><span class="line"><span class="comment">//在末尾添加一个集合</span></span><br><span class="line">arr ++= <span class="type">ArrayBuffer</span>(<span class="string">"Scala"</span>, <span class="string">"Java"</span>)</span><br><span class="line"><span class="comment">//在指定位置添加元素</span></span><br><span class="line">arr(<span class="number">1</span>) = <span class="string">"spark"</span></span><br><span class="line">arr.insert(<span class="number">1</span>, <span class="string">"Flume"</span>)</span><br><span class="line">arr.insert(<span class="number">1</span>, <span class="string">"Kafka"</span>, <span class="string">"Kylin"</span>)</span><br><span class="line">arr.insertAll(<span class="number">1</span>, <span class="type">ArrayBuffer</span>(<span class="string">"Hello"</span>, <span class="string">"World"</span>))</span><br><span class="line">println(arr)</span><br><span class="line"></span><br><span class="line"><span class="comment">//更新元素</span></span><br><span class="line">arr(<span class="number">1</span>) = <span class="string">"insistent"</span></span><br><span class="line">arr.update(<span class="number">2</span>, <span class="string">"Java"</span>)</span><br><span class="line">println(arr)</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取指定元素</span></span><br><span class="line">println(arr(<span class="number">1</span>))</span><br><span class="line">println(arr.apply(<span class="number">2</span>))</span><br><span class="line">println(arr.take(<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">//删除元素</span></span><br><span class="line">arr -= <span class="string">"insistent"</span></span><br><span class="line"><span class="comment">//删除集合</span></span><br><span class="line">arr -= (<span class="string">"Java"</span>, <span class="string">"Kafka"</span>)</span><br><span class="line">arr.remove(<span class="number">1</span>)</span><br><span class="line"><span class="comment">//从1处开始删掉三个</span></span><br><span class="line">arr.remove(<span class="number">1</span>, <span class="number">3</span>)</span><br><span class="line"><span class="comment">//从前往后移除n个元素</span></span><br><span class="line">arr.trimStart(<span class="number">1</span>)</span><br><span class="line"><span class="comment">//从后往前移除n个元素</span></span><br><span class="line">arr.trimEnd(<span class="number">1</span>)</span><br><span class="line">println(arr)</span><br><span class="line"></span><br><span class="line"><span class="comment">//遍历数组</span></span><br><span class="line"><span class="keyword">for</span> (i &lt;- arr) &#123;</span><br><span class="line">  print(i + <span class="string">" "</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//变长数组转成定长数组</span></span><br><span class="line">arr.toArray</span><br><span class="line"><span class="comment">//定长数组转成变长数组</span></span><br><span class="line">array.toBuffer</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+      <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center;">
+  <img id="wechat_subscriber_qcode" src="/uploads/qrcode_for_bigdata_ai_tech.jpg" alt="Chaojian Zhang wechat" style="width: 200px; max-width: 100%;">
+  <div>欢迎关注微信公众号“大数据技术和人工智能”<br>专注大数据、人工智能等相关技术。</div>
+</div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Scala/" rel="tag"># Scala</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Scala快速入门-环境安装篇/" rel="next" title="Scala快速入门 - 环境安装篇">
+                <i class="fa fa-chevron-left"></i> Scala快速入门 - 环境安装篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Flink简单介绍/" rel="prev" title="Flink简单介绍">
+                Flink简单介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/dx.jpeg" alt="Chaojian Zhang">
+            
+              <p class="site-author-name" itemprop="name">Chaojian Zhang</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:chaojianok@163.com" title="E-Mail &rarr; mailto:chaojianok@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="http://weibo.com/u/3200541687" title="Weibo &rarr; http://weibo.com/u/3200541687" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#声明值和变量"><span class="nav-number">1.</span> <span class="nav-text">声明值和变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本数据类型"><span class="nav-number">2.</span> <span class="nav-text">基本数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#操作符"><span class="nav-number">3.</span> <span class="nav-text">操作符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#控制结构"><span class="nav-number">4.</span> <span class="nav-text">控制结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#if条件表达式"><span class="nav-number">4.0.1.</span> <span class="nav-text">if条件表达式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#while循环"><span class="nav-number">4.0.2.</span> <span class="nav-text">while循环</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#for循环"><span class="nav-number">4.0.3.</span> <span class="nav-text">for循环</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#数组"><span class="nav-number">5.</span> <span class="nav-text">数组</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#定长数组，就是长度不变的数组，在Scala中使用Array进行声明，如下："><span class="nav-number">5.0.1.</span> <span class="nav-text">定长数组，就是长度不变的数组，在Scala中使用Array进行声明，如下：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可变数组"><span class="nav-number">5.0.2.</span> <span class="nav-text">可变数组</span></a></li></ol></li></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chaojian Zhang</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.1</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.1"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.1"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
