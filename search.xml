@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[Elasticsearch常用操作]]></title>
+    <url>%2FElasticsearch%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%2F</url>
+    <content type="text"><![CDATA[本篇简单整理了Elasticsearch的一些常用的API。 新增一个索引 12345678910curl -X PUT 'http://localhost:9200/index_name' -H 'Content-Type: application/json' -d '&#123; "settings": &#123; ... &#125;, "mappings": &#123; "one": &#123;...&#125;, "two": &#123;...&#125;, ... &#125;&#125;' 删除一个索引 1curl -X DELETE "http://localhost:9200/index_name" 删除多个索引 1curl -X DELETE "http://localhost:9200/index_name1,index_name2" 删除所有索引 12curl -X DELETE "http://localhost:9200/_all" curl -X DELETE "http://localhost:9200/*" 添加一条数据 12345curl -X PUT 'http://localhost:9200/index_name/type_name/id' -H 'Content-Type: application/json' -d '&#123; "title": "The title", "text": "The text ...", "date": "2019/01/01"&#125;' 删除单条数据 1curl -X DELETE "http://localhost:9200/index_name/type_name/id" 批量删除多条数据 1234curl -X POST "http://localhost:9200/_bulk" -H 'Content-Type: application/json' -d '&#123;"delete":&#123;"_index":"index_name","_type":"main","_id":"1"&#125;&#125;&#123;"delete":&#123;"_index":"index_name","_type":"main","_id":"2"&#125;&#125;' 删除所有数据 1curl -X POST "http://localhost:9200/index_name/type_name/_delete_by_query?conflicts=proceed" -H 'Content-Type: application/json' -d '&#123;"query": &#123;"match_all": &#123;&#125;&#125;&#125;' 修改索引setting 1234567curl -X POST 'http://localhost:9200/index_name' -H 'Content-Type: application/json' -d '&#123; "settings": &#123; "number_of_shards": 3, "number_of_replicas": 0, "index.mapping.total_fields.limit": 5000 &#125;&#125;' 索引重命名 12345678curl -X POST 'http://localhost:9200/_reindex' -H 'Content-Type: application/json' -d '&#123; "source": &#123; "index": "index_name_old" &#125;, "dest": &#123; "index": "index_name_new" &#125;&#125;' 手动迁移分片 12345678910111213141516171819202122curl -X PUT 'http://localhost:9200/_cluster/settings' -H 'Content-Type: application/json' -d'&#123; "transient": &#123; "cluster.routing.allocation.enable": "none" &#125;&#125;'curl -X PUT 'http://localhost:9200/_cluster/settings' -H 'Content-Type: application/json' -d'&#123; "transient": &#123; "cluster.routing.allocation.enable": "all" &#125;&#125;'curl -X POST 'http://localhost:9200/_cluster/reroute' -H 'Content-Type: application/json' -d '&#123; "commands" : [ &#123; "move" : &#123; "index" : "reindex-resharding-test", "shard" : 0, "from_node" : "192.168.0.101", "to_node" : "192.168.0.102" &#125; &#125; ]&#125;' 查看集群状态 1curl -X GET 'http://localhost:9200/_cluster/health?pretty' 查看所有索引 1curl -X GET 'http://localhost:9200/_cat/indices?v' 查看所有shards 1curl -X GET 'http://localhost:9200/_cat/shards' 查看unassigned shards 1curl -X GET 'http://localhost:9200/_cat/shards' | grep UNASSIGNED]]></content>
+      <categories>
+        <category>Elasticsearch</category>
+      </categories>
+      <tags>
+        <tag>大数据</tag>
+        <tag>Elasticsearch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Elasticsearch本地安装和常见问题]]></title>
+    <url>%2FElasticsearch%E6%9C%AC%E5%9C%B0%E5%AE%89%E8%A3%85%E5%92%8C%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%2F</url>
+    <content type="text"><![CDATA[Elasticsearch是一个分布式、RESTful风格的搜索和数据分析引擎。目前已被各大公司广泛的引入生产使用，也已成为大数据生态的重要组成部分。 Elasticsearch使用Java构建，不同版本的Elasticsearch对Java版本要求略有差异，可参考下图来选择Elasticsearch和Java的版本（下图来自官网Support Matrix JVM）。 Elasticsearch本地安装本地安装Elasticsearch非常简单，首先到官网下载Elasticsearch到本地指定目录，然后解压，进入到Elasticsearch的解压目录下，执行./bin/elasticsearch或.\bin\elasticsearch.bat(Windows)，可以加上-d参数让Elasticsearch在后台运行。至此，Elasticsearch就安装好了，可以通过curl http://localhost:9200或者用浏览器打开http://localhost:9200/检查是否正常启动，下图这样就表示正常启动了。 常见问题Elasticsearch的安装非常简单，通常在安装过程中会遇到一些问题，下面这几个问题是在Ubuntu操作系统安装时经常遇到的问题。下面的部分内容参考了这篇文章。 问题一：12ERROR: [1] bootstrap checks failed[1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144] 解决办法：切换到root用户修改配置/etc/sysctl.conf添加下面配置并执行命令：12vm.max_map_count=655360sysctl -p 然后，重新启动elasticsearch，即可启动成功。 问题二：12ERROR: [1] bootstrap checks failed[1]: max number of threads [1024] for user [elasticsearch] is too low, increase to at least [2048] 解决办法：修改/etc/security/limits.d/90-nproc.conf1* soft nproc 1024 修改成 * soft nproc 2048 问题三：12ERROR: [1] bootstrap checks failed[1]: max file descriptors [4096] for elasticsearch process likely too low, increase to at least [65536] 解决办法：切换到root用户，编辑/etc/security/limits.conf添加如下内容（其实切换到root用户直接执行ulimit -n 65536即可）1234* soft nofile 65536* hard nofile 131072* soft nproc 2048* hard nproc 4096]]></content>
+      <categories>
+        <category>Elasticsearch</category>
+      </categories>
+      <tags>
+        <tag>大数据</tag>
+        <tag>Elasticsearch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Flink简单介绍]]></title>
+    <url>%2FFlink%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D%2F</url>
+    <content type="text"><![CDATA[本文简单介绍一下Flink，部分内容来源于网络，想深入了解Flink的读者可以参照官方文档深入学习Apache Flink。 流计算在介绍Flink之前首先说一下流计算的概念，流计算是针对流式数据的实时计算。 流式数据是指将数据看作数据流的形式来处理，数据流是在时间分布和数量上无限的一系列动态数据集合体，数据记录是数据流的最小组成单元。 流数据具有数据实时持续不断到达、到达次序独立、数据来源众多格式复杂、数据规模大且不十分关注存储、注重数据的整体价值而不关注个别数据等特点。 Apache Flink是什么Apache Flink是一个分布式流批一体化的开源平台。Flink的核心是一个提供数据分发、通信以及自动容错的流计算引擎。Flink在流计算之上构建批处理，并且原生的支持迭代计算、内存管理以及程序优化。官方称之为Stateful Computations over Data Streams，即数据流上有状态计算。官方对Flink的详细介绍What is Apache Flink。 Flink的特点现有的开源计算方案会把流处理和批处理作为两种不同的应用类型（如Apache Storm只支持流处理，Apache Spark只支持批(Micro Batching)处理），流处理一般需要支持低延迟、Exactly-once保证，而批处理需要支持高吞吐、高效率。Flink同时支持流处理和批处理，作为流处理时输入数据流是无界的，批处理被作为一种特殊的流处理，只是它的输入数据流被定义为有界的。 Flink重要基石Apache Flink的四个重要基石：Checkpoint、State、Time、Window Checkpoint：基于Chandy-Lamport算法实现了分布式一致性快照，提供了一致性的语义 State：丰富的State API，包括ValueState、ListState、MapState、BoardcastState Time：实现了Watermark机制，能够支持基于事件的时间的处理，能够容忍数据的延时、迟到和乱序 Window：开箱即用的窗口，滚动窗口、滑动窗口、会话窗口和灵活的自定义窗口 Flink的优势 支持高吞吐、低延迟、高性能的流数据处理 支持高度灵活的窗口（Window）操作 支持有状态计算的Exactly-once语义 提供DataStream API和DataSet API 适用场景Flink支持下面这三种最常见类型的应用示例，官网有详细的介绍Use Cases。 事件驱动的应用程序 数据分析应用 数据管道应用 基础架构 Flink集群启动后，首先会启动一个JobManger和一个或多个TaskManager。由Client提交任务给JobManager，JobManager再调度任务到各个TaskManager去执行，然后TaskManager将心跳和统计信息汇报给JobManager，TaskManager之间以流的形式进行数据的传输。JobManager、TaskManager和Client均为独立的JVM进程。 JobManager是系统的协调者，负责接收Job，调度组成Job的多个Task的执行，收集Job的状态信息，管理Flink集群中的TaskManager。 TaskManager是实际负责执行计算的Worker，并负责管理其所在节点的资源信息，在启动的时候将资源的状态向JobManager汇报。 Client负责提交Job，可以运行在任何与JobManager环境连通的机器上，提交Job后，Client可以结束进程，也可以不结束并等待结果返回。 基本编程模型Flink程序的基础构建模块是流(streams)与转换(transformations)，每一个数据流都起始于一个或多个source，并终止于一个或多个sink，下面是一个由Flink程序映射为Streaming Dataflow的示意图: 容错机制Flink的容错机制的核心部分是分布式数据流和operator state的一致性快照，系统发生故障的时候这些快照可以充当一致性检查点来退回，恢复作业的状态和计算位置等。官网有详细介绍Data Streaming Fault Tolerance。 Checkpointing Recovery Operator Snapshot Implementation]]></content>
+      <categories>
+        <category>Flink</category>
+      </categories>
+      <tags>
+        <tag>大数据</tag>
+        <tag>Flink</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Scala快速入门 - 基础语法篇]]></title>
+    <url>%2FScala%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95%E7%AF%87%2F</url>
+    <content type="text"><![CDATA[Scala是一门多范式编程语言，集成了面向对象和函数式语言的特性。本篇文章将以代码示例的形式简单介绍一下Scala语言的基础语法。 声明值和变量1234567891011121314// val声明的变量是不可变的val str1 = "Hello World!"val str2 : String = "Hello World!"val str3 : java.lang.String = "Hello World!"println(str1)println(str2)println(str3)// var声明的变量是可变的var str5 = "Hello World!"str5 = "str5 Hello World!"println(str5) 基本数据类型Scala的数据类型包括：Byte、Char、Short、Int、Long、Float、Double和Boolean。在Scala中，这些类型都是“类”，并且都是包scala的成员，比如，Int的全名是scala.Int。对于字符串，Scala用java.lang.String类来表示字符串。Scala的字面量包括：整数字面量、浮点数字面量、布尔型字面量、字符字面量、字符串字面量、符号字面量、函数字面量和元组字面量。举例如下：123456789val i = 123 //123就是整数字面量val i = 3.14 //3.14就是浮点数字面量val i = true //true就是布尔型字面量val i = 'A' //'A'就是字符字面量val i = "Hello" //"Hello"就是字符串字面量// Scala允许对“字面量”直接执行方法5.toString() //产生字符串"5""abc".intersect("bcd") //输出"bc" 操作符Scala的常用操作符：加(+)、减(-) 、乘(*) 、除(/) 、余数（%）、大于(&gt;)、小于(&lt;)、大于等于(&gt;=)和小于等于(&lt;=)等，这些操作符就是方法。Scala的操作符就是方法，a 方法 b和a.方法(b)是等价的，前者是后者的简写形式，这里的+是方法名，是Int类中的一个方法。1234// 下面三种写法的输出结果都是8val sum1 = 5 + 3val sum2 = (5).+(3)val sum2 = 5.+(3) 控制结构if条件表达式123456789101112131415161718val x = 6if (x &gt; 0) &#123; println("x = " + x)&#125; else &#123; println("x = " + x)&#125;val x = 3if (x &gt; 0) &#123; println("x = " + x)&#125; else if (x == 0) &#123; println("x = 0")&#125; else &#123; println("x = " + x)&#125;// Scala中的if表达式的值可以赋值给变量val a = if (x &gt; 0) 1 else -1 while循环1234567891011var i = 9while (i &gt; 0) &#123; i -= 1 printf("i is %d\n", i)&#125;var i = 0do &#123; i += 1 println(i)&#125; while (i &lt; 5) for循环12345678910111213141516171819202122232425262728293031323334353637// for Range// Range可以是一个数字区间表示 i to j ，或者 i until j，左箭头 &lt;- 用于为变量 x 赋值。for (a &lt;- 1 to 10) &#123; println("a = " + a);&#125;for (a &lt;- 1 until 10) &#123; println("a = " + a);&#125;for( a &lt;- 1 to 3; b &lt;- 1 to 3)&#123; println( "a = " + a ); println( "Value of b: " + b );&#125;// 循环集合var a = 0;val numList = List(1, 2, 3, 4, 5, 6);for (a &lt;- numList) &#123; println("a = " + a);&#125;// 循环过滤var a = 0;val numList = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);for (a &lt;- numList if a != 3; if a &lt; 8) &#123; println("a = " + a);&#125;// 使用yield// 大括号中用于保存变量和条件，retVal是变量，循环中的yield会把当前的元素记下来，保存在集合中，循环结束后将返回该集合。var a = 0;val numList = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);var retVal = for &#123; a &lt;- numList if a != 3; if a &lt; 8&#125; yield afor(a &lt;- retVal) &#123; println("a = " + a);&#125; 数组定长数组，就是长度不变的数组，在Scala中使用Array进行声明，如下：123456789101112131415161718//声明一个长度为3的整型数组，每个数组元素初始化为0val intValueArr = new Array[Int](3)//在Scala中，对数组元素的应用，是使用圆括号，而不是方括号，也就是使用intValueArr(0)，而不是intValueArr[0]，这个和Java是不同的。intValueArr(0) = 12intValueArr(1) = 45intValueArr(2) = 33//声明一个长度为3的字符串数组，每个数组元素初始化为nullval strArr = new Array[String](3)strArr(0) = "Flink"strArr(1) = "Storm"strArr(2) = "Spark"for (i &lt;- 0 to 2) println(strArr(i)) //Scala提供了更加简洁的数组声明和初始化方法，如下：val intValueArr = Array(12, 45, 33)val strArr = Array("Flink", "Storm", "Spark")//从上面代码可以看出，都不需要给出数组类型，Scala会自动根据提供的初始化数据来推断出数组的类型。 可变数组可变数组需要导入包scala.collection.mutable.ArrayBuffer123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051//导入ArrayBuffer包import scala.collection.mutable.ArrayBuffer//定义一个可变的数组val arr : ArrayBuffer[String] = new ArrayBuffer[String]()//在末尾添加一个元素arr += "Hadoop"//在末尾添加多个元素arr += ("Hive", "Hbase")//在末尾添加一个集合arr ++= ArrayBuffer("Scala", "Java")//在指定位置添加元素arr(1) = "spark"arr.insert(1, "Flume")arr.insert(1, "Kafka", "Kylin")arr.insertAll(1, ArrayBuffer("Hello", "World"))println(arr)//更新元素arr(1) = "insistent"arr.update(2, "Java")println(arr)//获取指定元素println(arr(1))println(arr.apply(2))println(arr.take(3))//删除元素arr -= "insistent"//删除集合arr -= ("Java", "Kafka")arr.remove(1)//从1处开始删掉三个arr.remove(1, 3)//从前往后移除n个元素arr.trimStart(1)//从后往前移除n个元素arr.trimEnd(1)println(arr)//遍历数组for (i &lt;- arr) &#123; print(i + " ")&#125;//变长数组转成定长数组arr.toArray//定长数组转成变长数组array.toBuffer]]></content>
+      <categories>
+        <category>Scala</category>
+      </categories>
+      <tags>
+        <tag>Scala</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Scala快速入门 - 环境安装篇]]></title>
+    <url>%2FScala%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8-%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E7%AF%87%2F</url>
+    <content type="text"><![CDATA[Scala环境安装非常简单，直接从官网下载下来解压后配置一下环境变量就可以了，本篇简单写一下操作步骤。 下载到Scala官网的下载页面下载Scala，也可以通过命令行执行wget https://downloads.lightbend.com/scala/2.12.8/scala-2.12.8.tgz的方式下载。 解压12345678910# 解压到/usr/local/share/sudo tar -zxf ~/下载/scala-2.12.8.tgz -C /usr/local/share/# 进入Scala解压目录cd /usr/local/share/# 将文件夹名改为scalamv ./scala-2.12.8/ ./scala/# 修改文件权限，用hadoop用户拥有对scala目录的权限sudo chown -R hadoop ./scala/# 修改目录权限sudo chmod -R 0777 ./scala/ 设置环境变量修改vim ~/.bashrc文件，在最下面添加下面两行12export SCALA_HOME=/usr/local/share/scalaexport PATH=$PATH:$SCALA_HOME/bin 执行source ~/.bashrc使生效 验证12345hadoop@ubuntu:/usr/local/share$ scalaWelcome to Scala 2.12.8 (Java HotSpot(TM) 64-Bit Server VM, Java 1.8.0_161).Type in expressions for evaluation. Or try :help.scala&gt; 输入:quit或按键盘Crtl+D(这个d 大小写都行，Crtl+c也行)退出Scala终端]]></content>
+      <categories>
+        <category>Scala</category>
+      </categories>
+      <tags>
+        <tag>Scala</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Flink本地环境搭建和创建Flink应用]]></title>
+    <url>%2FFlink%E6%9C%AC%E5%9C%B0%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E5%88%9B%E5%BB%BAFlink%E5%BA%94%E7%94%A8%2F</url>
+    <content type="text"><![CDATA[本篇介绍一下Flink本地环境搭建和创建Flink应用。 本地安装Flink可以在Linux、Mac OS X和Windows上运行，要求安装Java 8.x。1234java -versionjava version "1.8.0_161"Java(TM) SE Runtime Environment (build 1.8.0_161-b12)Java HotSpot(TM) 64-Bit Server VM (build 25.161-b12, mixed mode) 下载并启动Flink12345678#从官网下载页面 http://flink.apache.org/downloads.html 下载Flinkwget http://mirrors.tuna.tsinghua.edu.cn/apache/flink/flink-1.8.0/flink-1.8.0-bin-scala_2.11.tgztar xzf flink-1.8.0-bin-scala_2.11.tgzcd flink-1.8.0#启动本地Flink群集./bin/start-cluster.sh#停止本地Flink群集#./bin/stop-cluster.sh 启动成功后可以打开http://127.0.0.1:8081看到Flink的web UI，如下图所示。 本地安装也可以通过Flink源码构建的方式，具体操作可以参考Flink源码分析-源码构建。 运行示例使用nc命令监听指定端口。12345678nc -l 9002#然后随便输入点东西，比如像下面这样#这些东西在提交SocketWindowWordCount Job之前或之后输入都是可以的hello worldword counthiflinkha ha 运行Flink测试example，这里用Flink WordCount Job来测试一下。12#在源码目录下执行，指定9002端口，这个端口要和刚刚nc命令监听的端口一致./build-target/bin/flink run ./build-target/examples/streaming/SocketWindowWordCount.jar --port 9002 查看SocketWindowWordCount Job的输出。12345678910#在源码目录下执行tail -100f ./build-target/log/flink-*-taskexecutor-0-*.out#执行后输出如下hello : 1world : 1word : 1count : 1hi : 1flink : 1ha : 2 也可以在Flink web UI里查看输出，如下图所示。 创建项目Flink可以使用Maven和Gradle来构建，这里只介绍使用Maven构建，要求使用Maven 3.x和Java 8.x。 使用Maven创建12345678910#使用Maven创建mvn archetype:generate \ -DarchetypeGroupId=org.apache.flink \ -DarchetypeArtifactId=flink-quickstart-java \ -DarchetypeVersion=1.8.0 \ -DgroupId=flink-demo \ -DartifactId=flink-demo \ -Dversion=0.1 \ -Dpackage=myflink \ -DinteractiveMode=false 如果没有指定groupId、artifactId、version、package，在创建的过程中会提示定义这几个参数的值并确认，如下图所示。 使用官方提供的快速入门脚本创建 12#使用官方提供的快速入门脚本创建curl https://flink.apache.org/q/quickstart.sh | bash -s 1.8.0 使用IntelliJ IDEA等集成开发环境新建 创建好的项目结构如下1234567891011tree myflink/.├── pom.xml└── src └── main ├── java │ └── myflink │ ├── BatchJob.java │ └── StreamingJob.java └── resources └── log4j.properties 接下来就可以开始开心愉快的coding啦^_^]]></content>
+      <categories>
+        <category>Flink</category>
+      </categories>
+      <tags>
+        <tag>大数据</tag>
+        <tag>Flink</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Elasticsearch源码分析 - 源码构建]]></title>
+    <url>%2FElasticsearch%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E6%9E%84%E5%BB%BA%2F</url>
+    <content type="text"><![CDATA[本篇介绍一下如何从源码构建Elasticsearch，构建Elasticsearch源码是学习和研究Elasticsearch源码的基础，有助于更好的了解Elasticsearch。 环境准备 环境/软件 版本 备注 OS Ubuntu 14.04 LTS Gradle 5.4 Java 9.0.4+11 Oracle Corporation 9.0.4 [OpenJDK 64-Bit Server VM 9.0.4+11] Elasticsearch 6.2 从源码构建Elasticsearch需要注意下面几个问题：1、从源码构建Elasticsearch需要使用Gradle，因此需要确认下是否安装了gradle，可以参考官网安装文档安装，安装步骤如下：1234567891011mkdir /opt/gradleunzip -d /opt/gradle ./下载/gradle-5.4-bin.zipls /opt/gradle/gradle-5.4#添加环境变量vi ~/.bashrc#在 ~/.bashrc 文件下面加上这句export PATH=$PATH:/opt/gradle/gradle-5.4/bin#使新增的环境变量即时生效source ~/.bashrc#检查 gradle 是否安装配置成功gradle -v 2、Elasticsearch编译和运行时所要求的JDK版本是不一样的，以V6.2版本为例，Runtime要求最低JDK8，Compile要求最低JDK9。不同版本的Elasticsearch应该如何确定所需JDK运行时和编译的版本呢？可以在Elasticsearch的源码里找到，如下：12345678910111213141516171819/* * Elasticsearch &lt;= v6.3*///代码文件位置：buildSrc/src/main/groovy/org/elasticsearch/gradle/BuildPlugin.groovystatic final JavaVersion minimumRuntimeVersion = JavaVersion.VERSION_1_8static final JavaVersion minimumCompilerVersion = JavaVersion.VERSION_1_9/* * Elasticsearch &gt;= v6.4*///代码文件位置：buildSrc/src/main/groovy/org/elasticsearch/gradle/BuildPlugin.groovy//这段代码对应的配置文件分别是下面这两个：//buildSrc/src/main/resources/minimumCompilerVersion//buildSrc/src/main/resources/minimumRuntimeVersionJavaVersion minimumRuntimeVersion = JavaVersion.toVersion( BuildPlugin.class.getClassLoader().getResourceAsStream("minimumRuntimeVersion").text.trim())JavaVersion minimumCompilerVersion = JavaVersion.toVersion( BuildPlugin.class.getClassLoader().getResourceAsStream("minimumCompilerVersion").text.trim()) 3、在终端执行构建操作前建议把终端改为bash，不然可能会有点问题。 开始构建具体步骤如下：12345678#下载源码git clone https://github.com/elastic/elasticsearch.git#进入源码目录cd elasticsearch#切换到一个稳定分支git checkout 6.2#构建源码./gradlew assemble 看到下面输出表示构建成功了。12BUILD SUCCESSFUL in 10m 15s505 actionable tasks: 505 executed 测试构建成功后就可以启动Elasticsearch了，如下：12#在源码目录下执行./gradlew run 启动成功后浏览器打开127.0.0.1:9200显示如下：123456789101112131415&#123; "name" : "node-0", "cluster_name" : "distribution_run", "cluster_uuid" : "E3qa7TIkTTGNP32WizSyXg", "version" : &#123; "number" : "6.2.5", "build_hash" : "e38fe8a", "build_date" : "2019-04-25T01:27:03.655047Z", "build_snapshot" : true, "lucene_version" : "7.2.1", "minimum_wire_compatibility_version" : "5.6.0", "minimum_index_compatibility_version" : "5.0.0" &#125;, "tagline" : "You Know, for Search"&#125;]]></content>
+      <categories>
+        <category>Elasticsearch</category>
+      </categories>
+      <tags>
+        <tag>大数据</tag>
+        <tag>Elasticsearch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Flink源码分析 - 源码构建]]></title>
+    <url>%2FFlink%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E6%9E%84%E5%BB%BA%2F</url>
+    <content type="text"><![CDATA[本篇介绍一下如何从源码构建Flink，构建Flink源码是学习和研究Flink源码的基础，有助于更好的了解Flink。 环境准备 环境/软件 版本 备注 OS Ubuntu 14.04 LTS Maven 3.0.5 Java 1.8.0_161 Flink 1.8 构建前先确认下Maven和JDK版本，至少需要Maven 3.x和Java 8才能构建。 构建源码具体步骤如下：1234567891011121314#先查看下maven和Java版本#mvn -v#java -version#下载源码git clone https://github.com/apache/flink.git#进入源码目录cd flink#切换到一个稳定分支git checkout release-1.8#构建源码#-DskipTests跳过执行测试程序#-Dfast跳过测试、QA插件和JavaDocs，加快构建速度#建议加上-Dfast参数，避免在构建的过程中会遇到各种各样的问题mvn clean install -DskipTests -Dfast 看到下面输出表示构建成功了。1234567[INFO] ------------------------------------------------------------------------[INFO] BUILD SUCCESS[INFO] ------------------------------------------------------------------------[INFO] Total time: 12:03.086s[INFO] Finished at: Wed Apr 24 10:38:46 CST 2019[INFO] Final Memory: 478M/1300M[INFO] ------------------------------------------------------------------------ 至此，Flink就构建成功了。 测试Flink已经构建好了，这里用 SocketWindowWordCount 的例子来测试一下，看看是否可以正常执行。首先按照下面的步骤启动Flink。123456#在源码目录下执行./build-target/bin/start-cluster.sh#执行后输出如下，表示启动成功Starting cluster.Starting standalonesession daemon on host ubuntu.Starting taskexecutor daemon on host ubuntu. 启动成功后可以打开http://127.0.0.1:8081看到Flink的web UI，如下图所示。 使用nc命令监听指定端口。12345678nc -l 9002#然后随便输入点东西，比如像下面这样#这些东西在提交 SocketWindowWordCount Job之前或之后输入都是可以的hello worldword counthiflinkha ha 运行Flink测试example，这里用Flink WordCount Job来测试一下。12#在源码目录下执行，指定9002端口，这个端口要和刚刚 nc 命令监听的端口一致./build-target/bin/flink run ./build-target/examples/streaming/SocketWindowWordCount.jar --port 9002 查看SocketWindowWordCount Job的输出。12345678910#在源码目录下执行tail -100f ./build-target/log/flink-*-taskexecutor-0-*.out#执行后输出如下hello : 1world : 1word : 1count : 1hi : 1flink : 1ha : 2 也可以在Flink web UI里查看输出，如下图所示。]]></content>
+      <categories>
+        <category>Flink</category>
+      </categories>
+      <tags>
+        <tag>大数据</tag>
+        <tag>Flink</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Hello World]]></title>
+    <url>%2Fhello-world%2F</url>
+    <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
+  </entry>
+</search>
