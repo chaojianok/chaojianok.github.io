@@ -111,13 +111,13 @@
 <meta property="og:site_name" content="Chaojianok">
 <meta property="og:description" content="本文简单介绍一下Flink，部分内容来源于网络，想深入了解Flink的读者可以参照官方文档深入学习Apache Flink。  流计算在介绍Flink之前首先说一下流计算的概念，流计算是针对流式数据的实时计算。  流式数据是指将数据看作数据流的形式来处理，数据流是在时间分布和数量上无限的一系列动态数据集合体，数据记录是数据流的最小组成单元。 流数据具有数据实时持续不断到达、到达次序独立、数据来源">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://chaojianok.github.io/images/Flink介绍_基础架构.png">
-<meta property="og:image" content="https://chaojianok.github.io/images/Flink介绍_基本编程模型.png">
-<meta property="og:updated_time" content="2019-04-30T07:30:00.000Z">
+<meta property="og:image" content="https://chaojianok.github.io/images/flink/Flink介绍_基础架构.png">
+<meta property="og:image" content="https://chaojianok.github.io/images/flink/Flink介绍_基本编程模型.png">
+<meta property="og:updated_time" content="2019-06-04T01:17:49.781Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flink简单介绍">
 <meta name="twitter:description" content="本文简单介绍一下Flink，部分内容来源于网络，想深入了解Flink的读者可以参照官方文档深入学习Apache Flink。  流计算在介绍Flink之前首先说一下流计算的概念，流计算是针对流式数据的实时计算。  流式数据是指将数据看作数据流的形式来处理，数据流是在时间分布和数量上无限的一系列动态数据集合体，数据记录是数据流的最小组成单元。 流数据具有数据实时持续不断到达、到达次序独立、数据来源">
-<meta name="twitter:image" content="https://chaojianok.github.io/images/Flink介绍_基础架构.png">
+<meta name="twitter:image" content="https://chaojianok.github.io/images/flink/Flink介绍_基础架构.png">
 
 
 
@@ -446,7 +446,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-30 15:30:00" itemprop="dateModified" datetime="2019-04-30T15:30:00+08:00">2019-04-30</time>
+                <time title="修改时间：2019-06-04 09:17:49" itemprop="dateModified" datetime="2019-06-04T09:17:49+08:00">2019-06-04</time>
               
             
           </span>
@@ -555,7 +555,7 @@
 <li>数据分析应用  </li>
 <li>数据管道应用  </li>
 </ul>
-<h2 id="基础架构"><a href="#基础架构" class="headerlink" title="基础架构"></a>基础架构</h2><p><img src="/images/Flink介绍_基础架构.png" alt="Flink基础架构" title="Flink基础架构">  </p>
+<h2 id="基础架构"><a href="#基础架构" class="headerlink" title="基础架构"></a>基础架构</h2><p><img src="/images/flink/Flink介绍_基础架构.png" alt="Flink基础架构" title="Flink基础架构">  </p>
 <p>Flink集群启动后，首先会启动一个JobManger和一个或多个TaskManager。由Client提交任务给JobManager，JobManager再调度任务到各个TaskManager去执行，然后TaskManager将心跳和统计信息汇报给JobManager，TaskManager之间以流的形式进行数据的传输。JobManager、TaskManager和Client均为独立的JVM进程。  </p>
 <ol>
 <li><p>JobManager是系统的协调者，负责接收Job，调度组成Job的多个Task的执行，收集Job的状态信息，管理Flink集群中的TaskManager。  </p>
@@ -566,7 +566,7 @@
 </li>
 </ol>
 <h2 id="基本编程模型"><a href="#基本编程模型" class="headerlink" title="基本编程模型"></a>基本编程模型</h2><p>Flink程序的基础构建模块是流(streams)与转换(transformations)，每一个数据流都起始于一个或多个source，并终止于一个或多个sink，下面是一个由Flink程序映射为Streaming Dataflow的示意图:  </p>
-<p><img src="/images/Flink介绍_基本编程模型.png" alt="Flink基本编程模型" title="Flink基本编程模型">  </p>
+<p><img src="/images/flink/Flink介绍_基本编程模型.png" alt="Flink基本编程模型" title="Flink基本编程模型">  </p>
 <h2 id="容错机制"><a href="#容错机制" class="headerlink" title="容错机制"></a>容错机制</h2><p>Flink的容错机制的核心部分是分布式数据流和<code>operator state</code>的一致性快照，系统发生故障的时候这些快照可以充当一致性检查点来退回，恢复作业的状态和计算位置等。官网有详细介绍<a href="https://ci.apache.org/projects/flink/flink-docs-release-1.8/internals/stream_checkpointing.html" target="_blank" rel="noopener">Data Streaming Fault Tolerance</a>。  </p>
 <ul>
 <li>Checkpointing  </li>
@@ -600,6 +600,13 @@
     <li class="popular-posts-item">
       
       
+      <div class="popular-posts-title"><a href="/Flink源码分析-剖析一个简单的Flink程序/" rel="bookmark">Flink源码分析 - 剖析一个简单的Flink程序</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
       <div class="popular-posts-title"><a href="/Flink源码分析-源码构建/" rel="bookmark">Flink源码分析 - 源码构建</a></div>
       
     </li>
@@ -615,13 +622,6 @@
       
       
       <div class="popular-posts-title"><a href="/Elasticsearch本地安装和常见问题/" rel="bookmark">Elasticsearch本地安装和常见问题</a></div>
-      
-    </li>
-  
-    <li class="popular-posts-item">
-      
-      
-      <div class="popular-posts-title"><a href="/Elasticsearch源码分析-源码构建/" rel="bookmark">Elasticsearch源码分析 - 源码构建</a></div>
       
     </li>
   
@@ -775,7 +775,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -968,7 +968,7 @@
     
       <span class="post-meta-item-text">站点总字数：</span>
     
-    <span title="站点总字数">17k</span>
+    <span title="站点总字数">30k</span>
   
 
   
@@ -979,7 +979,7 @@
     
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
     
-    <span title="站点阅读时长">15 分钟</span>
+    <span title="站点阅读时长">27 分钟</span>
   
 </div>
 

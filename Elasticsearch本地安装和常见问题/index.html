@@ -111,13 +111,13 @@
 <meta property="og:site_name" content="Chaojianok">
 <meta property="og:description" content="Elasticsearch是一个分布式、RESTful风格的搜索和数据分析引擎。目前已被各大公司广泛的引入生产使用，也已成为大数据生态的重要组成部分。  Elasticsearch使用Java构建，不同版本的Elasticsearch对Java版本要求略有差异，可参考下图来选择Elasticsearch和Java的版本（下图来自官网Support Matrix JVM）。  Elasticsea">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://chaojianok.github.io/images/Elasticsearch-and-JVM.png">
-<meta property="og:image" content="https://chaojianok.github.io/images/Elasticsearch-install-view.png">
-<meta property="og:updated_time" content="2019-05-22T01:57:04.832Z">
+<meta property="og:image" content="https://chaojianok.github.io/images/elasticsearch/Elasticsearch-and-JVM.png">
+<meta property="og:image" content="https://chaojianok.github.io/images/elasticsearch/Elasticsearch-install-view.png">
+<meta property="og:updated_time" content="2019-06-04T01:18:50.065Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Elasticsearch本地安装和常见问题">
 <meta name="twitter:description" content="Elasticsearch是一个分布式、RESTful风格的搜索和数据分析引擎。目前已被各大公司广泛的引入生产使用，也已成为大数据生态的重要组成部分。  Elasticsearch使用Java构建，不同版本的Elasticsearch对Java版本要求略有差异，可参考下图来选择Elasticsearch和Java的版本（下图来自官网Support Matrix JVM）。  Elasticsea">
-<meta name="twitter:image" content="https://chaojianok.github.io/images/Elasticsearch-and-JVM.png">
+<meta name="twitter:image" content="https://chaojianok.github.io/images/elasticsearch/Elasticsearch-and-JVM.png">
 
 
 
@@ -429,12 +429,24 @@
                 
               
 
-              <time title="创建时间：2019-05-22 09:55:25 / 修改时间：09:57:04" itemprop="dateCreated datePublished" datetime="2019-05-22T09:55:25+08:00">2019-05-22</time>
+              <time title="创建时间：2019-05-22 09:55:25" itemprop="dateCreated datePublished" datetime="2019-05-22T09:55:25+08:00">2019-05-22</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-04 09:18:50" itemprop="dateModified" datetime="2019-06-04T09:18:50+08:00">2019-06-04</time>
               
             
           </span>
@@ -518,9 +530,9 @@
 <p>Elasticsearch是一个分布式、RESTful风格的搜索和数据分析引擎。目前已被各大公司广泛的引入生产使用，也已成为大数据生态的重要组成部分。</p>
 </blockquote>
 <p>Elasticsearch使用Java构建，不同版本的Elasticsearch对Java版本要求略有差异，可参考下图来选择Elasticsearch和Java的版本（下图来自官网<a href="https://www.elastic.co/cn/support/matrix#matrix_jvm" target="_blank" rel="noopener">Support Matrix JVM</a>）。</p>
-<p><img src="/images/Elasticsearch-and-JVM.png" alt="Elasticsearch and JVM" title="Elasticsearch and JVM"></p>
+<p><img src="/images/elasticsearch/Elasticsearch-and-JVM.png" alt="Elasticsearch and JVM" title="Elasticsearch and JVM"></p>
 <h2 id="Elasticsearch本地安装"><a href="#Elasticsearch本地安装" class="headerlink" title="Elasticsearch本地安装"></a>Elasticsearch本地安装</h2><p>本地安装Elasticsearch非常简单，首先到官网<a href="https://www.elastic.co/cn/downloads/elasticsearch" target="_blank" rel="noopener">下载</a>Elasticsearch到本地指定目录，然后解压，进入到Elasticsearch的解压目录下，执行<code>./bin/elasticsearch</code>或<code>.\bin\elasticsearch.bat</code>(Windows)，可以加上<code>-d</code>参数让Elasticsearch在后台运行。至此，Elasticsearch就安装好了，可以通过<code>curl http://localhost:9200</code>或者用浏览器打开<code>http://localhost:9200/</code>检查是否正常启动，下图这样就表示正常启动了。</p>
-<p><img src="/images/Elasticsearch-install-view.png" alt="Elasticsearch install view" title="Elasticsearch install view"></p>
+<p><img src="/images/elasticsearch/Elasticsearch-install-view.png" alt="Elasticsearch install view" title="Elasticsearch install view"></p>
 <h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><p>Elasticsearch的安装非常简单，通常在安装过程中会遇到一些问题，下面这几个问题是在Ubuntu操作系统安装时经常遇到的问题。<br><em>下面的部分内容参考了<a href="http://blog.csdn.net/abcd_d_/article/details/53018927" target="_blank" rel="noopener">这篇文章</a>。</em>  </p>
 <h4 id="问题一："><a href="#问题一：" class="headerlink" title="问题一："></a>问题一：</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ERROR: [1] bootstrap checks failed</span><br><span class="line">[1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]</span><br></pre></td></tr></table></figure>
 <p>解决办法：<br>切换到root用户修改配置<code>/etc/sysctl.conf</code><br>添加下面配置并执行命令：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vm.max_map_count=655360</span><br><span class="line">sysctl -p</span><br></pre></td></tr></table></figure></p>
@@ -570,7 +582,7 @@
     <li class="popular-posts-item">
       
       
-      <div class="popular-posts-title"><a href="/Flink源码分析-源码构建/" rel="bookmark">Flink源码分析 - 源码构建</a></div>
+      <div class="popular-posts-title"><a href="/Flink源码分析-剖析一个简单的Flink程序/" rel="bookmark">Flink源码分析 - 剖析一个简单的Flink程序</a></div>
       
     </li>
   
@@ -731,7 +743,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -924,7 +936,7 @@
     
       <span class="post-meta-item-text">站点总字数：</span>
     
-    <span title="站点总字数">17k</span>
+    <span title="站点总字数">30k</span>
   
 
   
@@ -935,7 +947,7 @@
     
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
     
-    <span title="站点阅读时长">15 分钟</span>
+    <span title="站点阅读时长">27 分钟</span>
   
 </div>
 
