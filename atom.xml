@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://chaojianok.github.io/"/>
-  <updated>2019-06-05T05:34:14.374Z</updated>
+  <updated>2019-06-18T07:54:32.481Z</updated>
   <id>https://chaojianok.github.io/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Kafka环境搭建</title>
+    <link href="https://chaojianok.github.io/Kafka%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+    <id>https://chaojianok.github.io/Kafka环境搭建/</id>
+    <published>2019-06-18T07:50:39.000Z</published>
+    <updated>2019-06-18T07:54:32.481Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>这篇文章基于Linux平台介绍Kafka的安装和初体验。</p></blockquote><h2 id="下载代码"><a href="#下载代码" class="headerlink" title="下载代码"></a>下载代码</h2><p>下载并解压。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget http://mirror.bit.edu.cn/apache/kafka/2.2.0/kafka_2.12-2.2.0.tgz</span><br><span class="line">tar -xzf kafka_2.12-2.2.0.tgz</span><br><span class="line">cd kafka_2.12-2.2.0</span><br></pre></td></tr></table></figure></p><h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><p>Kafka依赖ZooKeeper，这里首先安装并启动ZooKeeper服务。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wget http://mirror.bit.edu.cn/apache/zookeeper/stable/apache-zookeeper-3.5.5-bin.tar.gz</span><br><span class="line">tar -xzf apache-zookeeper-3.5.5.tar.gz</span><br><span class="line">cd apache-zookeeper-3.5.5</span><br><span class="line">cp conf/zoo_sample.cfg conf/zoo.cfg</span><br><span class="line"><span class="meta">#</span><span class="bash">启动zookeeper服务</span></span><br><span class="line">bin/zkServer.sh start</span><br></pre></td></tr></table></figure></p><p>现在启动Kafka服务。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-server-start.sh config/server.properties</span><br></pre></td></tr></table></figure></p><h2 id="创建主题"><a href="#创建主题" class="headerlink" title="创建主题"></a>创建主题</h2><p>创建一个名为“test”的主题，它只包含一个分区和一个副本。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1 --topic test</span><br></pre></td></tr></table></figure></p><p>查看已经创建好的主题。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-topics.sh --list --bootstrap-server localhost:9092</span><br></pre></td></tr></table></figure></p><h2 id="发送消息"><a href="#发送消息" class="headerlink" title="发送消息"></a>发送消息</h2><p>Kafka附带一个命令行客户端，它将从文件或标准输入中获取输入，并将其作为消息发送到Kafka集群。默认情况下，每行将作为单独的消息发送。<br>运行生产者，然后在控制台中输入一些消息。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test</span><br><span class="line">Hello</span><br><span class="line">World</span><br></pre></td></tr></table></figure></p><h2 id="启动消费者"><a href="#启动消费者" class="headerlink" title="启动消费者"></a>启动消费者</h2><p>在命令行终端开启一个Kafka的消息消费者，它会将消息转储到标准输出。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning</span><br><span class="line">Hello</span><br><span class="line">World</span><br></pre></td></tr></table></figure></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;这篇文章基于Linux平台介绍Kafka的安装和初体验。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;下载代码&quot;&gt;&lt;a href=&quot;#下载代码&quot; class=&quot;headerlink&quot; title=&quot;下载代码&quot;&gt;&lt;/a&gt;下载代码&lt;/h2&gt;&lt;p
+      
+    
+    </summary>
+    
+      <category term="Kafka" scheme="https://chaojianok.github.io/categories/Kafka/"/>
+    
+    
+      <category term="大数据" scheme="https://chaojianok.github.io/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/"/>
+    
+      <category term="Kafka" scheme="https://chaojianok.github.io/tags/Kafka/"/>
+    
+  </entry>
   
   <entry>
     <title>Flink源码分析 - 剖析一个简单的Flink程序</title>
