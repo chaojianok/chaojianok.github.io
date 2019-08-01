@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.8.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-dx.png?v=7.2.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-dx.png?v=7.2.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    search: {
+      root: '/',
+      path: 'search.xml'
+    },
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="在之前的文章里分别介绍过Elasticsearch本地环境安装和常用操作和Elasticsearch源码构建来搭建一个Standalone（单机集群）模式的Elasticsearch环境，那么这种方式的环境能否在实际生产环境中使用呢？很显然是可以的，但是强烈不推荐。随着大数据的不断发展成熟和大数据应用的落地实施，传统的技术架构的缺陷越来越明显，分布式、集群、微服务、云计算等技术架构越来越流行，这篇">
+<meta name="keywords" content="大数据,Elasticsearch,Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Docker搭建Elasticsearch集群环境">
+<meta property="og:url" content="https://chaojianok.github.io/使用Docker搭建Elasticsearch集群环境/index.html">
+<meta property="og:site_name" content="Chaojianok">
+<meta property="og:description" content="在之前的文章里分别介绍过Elasticsearch本地环境安装和常用操作和Elasticsearch源码构建来搭建一个Standalone（单机集群）模式的Elasticsearch环境，那么这种方式的环境能否在实际生产环境中使用呢？很显然是可以的，但是强烈不推荐。随着大数据的不断发展成熟和大数据应用的落地实施，传统的技术架构的缺陷越来越明显，分布式、集群、微服务、云计算等技术架构越来越流行，这篇">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://chaojianok.github.io/images/elasticsearch/cluster-health.png">
+<meta property="og:image" content="https://chaojianok.github.io/images/elasticsearch/cat-health.png">
+<meta property="og:image" content="https://chaojianok.github.io/images/elasticsearch/nodes.png">
+<meta property="og:updated_time" content="2019-07-11T05:34:41.539Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Docker搭建Elasticsearch集群环境">
+<meta name="twitter:description" content="在之前的文章里分别介绍过Elasticsearch本地环境安装和常用操作和Elasticsearch源码构建来搭建一个Standalone（单机集群）模式的Elasticsearch环境，那么这种方式的环境能否在实际生产环境中使用呢？很显然是可以的，但是强烈不推荐。随着大数据的不断发展成熟和大数据应用的落地实施，传统的技术架构的缺陷越来越明显，分布式、集群、微服务、云计算等技术架构越来越流行，这篇">
+<meta name="twitter:image" content="https://chaojianok.github.io/images/elasticsearch/cluster-health.png">
+  <link rel="alternate" href="/atom.xml" title="Chaojianok" type="application/atom+xml">
+  <link rel="canonical" href="https://chaojianok.github.io/使用Docker搭建Elasticsearch集群环境/">
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>使用Docker搭建Elasticsearch集群环境 | Chaojianok</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Chaojianok</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">Chaojianok's Blog</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br/>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-search">
+          <a href="javascript:;" class="popup-trigger">
+          
+            <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://chaojianok.github.io/使用Docker搭建Elasticsearch集群环境/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ChaojianZhang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/dx.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaojianok">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">使用Docker搭建Elasticsearch集群环境
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-11 13:28:14 / 修改时间：13:34:41" itemprop="dateCreated datePublished" datetime="2019-07-11T13:28:14+08:00">2019-07-11</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Elasticsearch/" itemprop="url" rel="index"><span itemprop="name">Elasticsearch</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          <br>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">3.9k</span>
+            </span>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span title="阅读时长">4 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在之前的文章里分别介绍过<a href="https://www.toutiao.com/i6695934363168670220/" target="_blank" rel="noopener">Elasticsearch本地环境安装和常用操作</a>和<a href="https://www.toutiao.com/i6687000928286933508/" target="_blank" rel="noopener">Elasticsearch源码构建</a>来搭建一个Standalone（单机集群）模式的Elasticsearch环境，那么这种方式的环境能否在实际生产环境中使用呢？很显然是可以的，但是强烈不推荐。随着大数据的不断发展成熟和大数据应用的落地实施，传统的技术架构的缺陷越来越明显，分布式、集群、微服务、云计算等技术架构越来越流行，这篇文章就来介绍一下如何使用Docker来搭建一个Elasticsearch的集群环境。  </p>
+<h2 id="为什么是Docker？"><a href="#为什么是Docker？" class="headerlink" title="为什么是Docker？"></a>为什么是Docker？</h2><p>Docker是一个高速创新的企业级容器平台，优点很多，比如：  </p>
+<ul>
+<li>可以在任何地方安全地构建、共享和运行任何应用程序</li>
+<li>节省资源、降低成本</li>
+<li>部署非常灵活方便</li>
+</ul>
+<h2 id="让我们开始吧"><a href="#让我们开始吧" class="headerlink" title="让我们开始吧"></a>让我们开始吧</h2><p>这个例子会使用Docker来搭建一个主节点两个数据节点的Elasticsearch集群，首先要已经安装好docker，可以使用<code>docker --version</code>命令来看确认一下。  </p>
+<p>1、下面是目录结构，接下来会基于这个目录结构来操作<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── docker-compose.yml</span><br><span class="line">├── config</span><br><span class="line">│   ├── es01</span><br><span class="line">│   │   └── elasticsearch.yml</span><br><span class="line">│   ├── es02</span><br><span class="line">│   │   └── elasticsearch.yml</span><br><span class="line">│   └── es03</span><br><span class="line">│       └── elasticsearch.yml</span><br><span class="line">├── data</span><br><span class="line">│   ├── es01</span><br><span class="line">│   ├── es02</span><br><span class="line">│   └── es03</span><br><span class="line">└── logs</span><br><span class="line">    ├── es01</span><br><span class="line">    ├── es02</span><br><span class="line">    └── es03</span><br></pre></td></tr></table></figure></p>
+<p>2、编写docker-compose.yml文件<br><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'2'</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">  es01:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:6.2.0</span></span><br><span class="line"><span class="attr">    container_name:</span> <span class="string">es01</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"ES_JAVA_OPTS=-Xms512m -Xmx512m"</span></span><br><span class="line"><span class="attr">    ulimits:</span></span><br><span class="line"><span class="attr">      memlock:</span></span><br><span class="line"><span class="attr">        soft:</span> <span class="bullet">-1</span></span><br><span class="line"><span class="attr">        hard:</span> <span class="bullet">-1</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./data/es01:/usr/share/elasticsearch/data</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./config/es01/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./logs/es01:/usr/share/elasticsearch/logs</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">9200</span><span class="string">:9200</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">9300</span><span class="string">:9300</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">esnet</span></span><br><span class="line"><span class="attr">  es02:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:6.2.0</span></span><br><span class="line"><span class="attr">    container_name:</span> <span class="string">es02</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"ES_JAVA_OPTS=-Xms512m -Xmx512m"</span></span><br><span class="line"><span class="attr">    ulimits:</span></span><br><span class="line"><span class="attr">      memlock:</span></span><br><span class="line"><span class="attr">        soft:</span> <span class="bullet">-1</span></span><br><span class="line"><span class="attr">        hard:</span> <span class="bullet">-1</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./data/es02:/usr/share/elasticsearch/data</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./config/es02/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./logs/es02:/usr/share/elasticsearch/logs</span></span><br><span class="line"><span class="attr">    depends_on:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">es01</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">esnet</span></span><br><span class="line"><span class="attr">  es03:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:6.2.0</span></span><br><span class="line"><span class="attr">    container_name:</span> <span class="string">es03</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"ES_JAVA_OPTS=-Xms512m -Xmx512m"</span></span><br><span class="line"><span class="attr">    ulimits:</span></span><br><span class="line"><span class="attr">      memlock:</span></span><br><span class="line"><span class="attr">        soft:</span> <span class="bullet">-1</span></span><br><span class="line"><span class="attr">        hard:</span> <span class="bullet">-1</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./data/es03:/usr/share/elasticsearch/data</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./config/es03/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./logs/es03:/usr/share/elasticsearch/logs</span></span><br><span class="line"><span class="attr">    depends_on:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">es01</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">esnet</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line"><span class="attr">  esnet:</span></span><br></pre></td></tr></table></figure></p>
+<p>Elasticsearch集群启动的时候，需要主节点启动成功后，其他节点才能启动并join到集群里，因此在配置文件里要保证这一点，官网<a href="https://docs.docker.com/compose/startup-order/" target="_blank" rel="noopener">Control startup and shutdown order in Compose</a>这篇文章介绍了如何控制启动和关闭顺序的问题，我这里是通过配置<code>restart: always</code>和<code>depends_on</code>来控制顺序的，这个办法比较简单。<br>另外，我这里使用的是6.2.0版本的elasticsearch，官方目前只提供了6.8.1和7.2.0版本的docker镜像，所以需要先自己做个6.2.0的镜像，下面简单说下如何制作镜像。  </p>
+<ul>
+<li>新建一个目录并进入这个目录</li>
+<li>新建Dockerfile文件，文件内容为<code>FROM docker.elastic.co/elasticsearch/elasticsearch:6.2.0</code>，保存</li>
+<li>打开终端进入当前目录执行<code>docker build .</code>  </li>
+</ul>
+<p>3、分别编写每个节点的elasticsearch.yml配置<br><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">cluster.name:</span> <span class="string">es-cluster</span></span><br><span class="line"><span class="string">node.name:</span> <span class="string">es01</span></span><br><span class="line"><span class="string">node.master:</span> <span class="literal">true</span></span><br><span class="line"><span class="string">node.data:</span> <span class="literal">false</span></span><br><span class="line"><span class="string">path.data:</span> <span class="string">/usr/share/elasticsearch/data</span></span><br><span class="line"><span class="string">path.logs:</span> <span class="string">/usr/share/elasticsearch/logs</span></span><br><span class="line"><span class="string">bootstrap.memory_lock:</span> <span class="literal">true</span></span><br><span class="line"><span class="string">network.host:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span></span><br><span class="line"><span class="string">http.port:</span> <span class="number">9200</span></span><br><span class="line"><span class="string">transport.tcp.port:</span> <span class="number">9300</span></span><br><span class="line"><span class="string">discovery.zen.ping.unicast.hosts:</span> <span class="string">["es01",</span> <span class="string">"es02"</span><span class="string">,</span> <span class="string">"es03"</span><span class="string">]</span></span><br><span class="line"><span class="comment"># discovery.seed_hosts: ["es02", "es03"]</span></span><br><span class="line"><span class="comment"># cluster.initial_master_nodes: ["es01", "es02", "es03"]</span></span><br><span class="line"></span><br><span class="line"><span class="string">http.cors.enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="string">http.cors.allow-origin:</span> <span class="string">"*"</span></span><br><span class="line"></span><br><span class="line"><span class="string">xpack.security.enabled:</span> <span class="literal">false</span></span><br><span class="line"><span class="string">xpack.security.transport.ssl.enabled:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure></p>
+<p><em>每个节点的配置基本一样，这里只写一个节点的配置，其他节点主要改下<code>node.name</code>、<code>node.master</code>、<code>node.data</code>配置即可。</em>  </p>
+<p>4、执行命令<code>docker-compose up</code>部署集群，可以在命令后面加上<code>-d</code>参数使后台执行。  </p>
+<p>5、验证<br>浏览器打开<code>http://127.0.0.1:9200</code>，输出如下则表示成功了。<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"name"</span> : <span class="string">"es01"</span>,</span><br><span class="line">  <span class="attr">"cluster_name"</span> : <span class="string">"es-cluster"</span>,</span><br><span class="line">  <span class="attr">"cluster_uuid"</span> : <span class="string">"-zUZlE_lTJ2LX7JMq4R40g"</span>,</span><br><span class="line">  <span class="attr">"version"</span> : &#123;</span><br><span class="line">    <span class="attr">"number"</span> : <span class="string">"6.2.0"</span>,</span><br><span class="line">    <span class="attr">"build_hash"</span> : <span class="string">"37cdac1"</span>,</span><br><span class="line">    <span class="attr">"build_date"</span> : <span class="string">"2018-02-01T17:31:12.527918Z"</span>,</span><br><span class="line">    <span class="attr">"build_snapshot"</span> : <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">"lucene_version"</span> : <span class="string">"7.2.1"</span>,</span><br><span class="line">    <span class="attr">"minimum_wire_compatibility_version"</span> : <span class="string">"5.6.0"</span>,</span><br><span class="line">    <span class="attr">"minimum_index_compatibility_version"</span> : <span class="string">"5.0.0"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"tagline"</span> : <span class="string">"You Know, for Search"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接下来再使用Elasticsearch提供的API来检查一下集群和节点的健康状况。<br>使用<code>/_cluster/health</code>或<code>/_cat/health?v</code>查看集群健康状况，结果分别如下图：<br><img src="/images/elasticsearch/cluster-health.png" alt="集群健康" title="集群健康">  </p>
+<p><img src="/images/elasticsearch/cat-health.png" alt="集群健康" title="集群健康">  </p>
+<p>使用<code>/_cat/nodes?v</code>查看节点，结果如下图：<br><img src="/images/elasticsearch/nodes.png" alt="节点" title="节点">  </p>
+<p>至此，就已经完成了使用Docker搭建的Elasticsearch集群。  </p>
+
+    </div>
+      
+  <div class="popular-posts-header">相关文章推荐</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/Elasticsearch常用操作/" rel="bookmark">Elasticsearch常用操作</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/Elasticsearch本地安装和常见问题/" rel="bookmark">Elasticsearch本地安装和常见问题</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/Elasticsearch源码分析-源码构建/" rel="bookmark">Elasticsearch源码分析 - 源码构建</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/Flink本地环境搭建和创建Flink应用/" rel="bookmark">Flink本地环境搭建和创建Flink应用</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/Flink源码分析-剖析一个简单的Flink程序/" rel="bookmark">Flink源码分析 - 剖析一个简单的Flink程序</a></div>
+      
+    </li>
+  
+  </ul>
+
+
+    
+    
+    
+      <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center;">
+  <img id="wechat_subscriber_qcode" src="/uploads/qrcode_for_bigdata_ai_tech.jpg" alt="ChaojianZhang wechat" style="width: 200px; max-width: 100%;">
+  <div>关注微信公众号订阅更多技术干货</div>
+</div>
+
+      <div>
+        
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>ChaojianZhang</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://chaojianok.github.io/使用Docker搭建Elasticsearch集群环境/" title="使用Docker搭建Elasticsearch集群环境">https://chaojianok.github.io/使用Docker搭建Elasticsearch集群环境/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+
+    <footer class="post-footer">
+          
+        
+        <div class="post-tags">
+            <a href="/tags/大数据/" rel="tag"># 大数据</a>
+          
+            <a href="/tags/Elasticsearch/" rel="tag"># Elasticsearch</a>
+          
+            <a href="/tags/Docker/" rel="tag"># Docker</a>
+          
+        </div>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+              <a href="/Kafka环境搭建/" rel="next" title="Kafka环境搭建">
+                <i class="fa fa-chevron-left"></i> Kafka环境搭建
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+          </div>
+        </div>
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" src="/uploads/dx.jpeg" alt="ChaojianZhang">
+  <p class="site-author-name" itemprop="name">ChaojianZhang</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:chaojianok@163.com" title="E-Mail &rarr; mailto:chaojianok@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://weibo.com/3200541687" title="Weibo &rarr; https://weibo.com/3200541687" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://www.toutiao.com/c/user/1587332666372254/" title="头条号 &rarr; https://www.toutiao.com/c/user/1587332666372254/" rel="noopener" target="_blank"><i class="fa fa-fw fa-newspaper-o"></i>头条号</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://blog.csdn.net/chaojianok" title="CSDN &rarr; https://blog.csdn.net/chaojianok" rel="noopener" target="_blank"><i class="fa fa-fw fa-codiepie"></i>CSDN</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么是Docker？"><span class="nav-number">1.</span> <span class="nav-text">为什么是Docker？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#让我们开始吧"><span class="nav-number">2.</span> <span class="nav-text">让我们开始吧</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ChaojianZhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">35k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">32 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.2.0</div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+  
+  <script src="/js/affix.js?v=7.2.0"></script>
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.2.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
